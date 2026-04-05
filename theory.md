@@ -50,6 +50,7 @@ $$R(\theta) = \frac{1}{2} \Vert \theta \Vert_2^2 = \frac{1}{2} \sum_{j=1}^d \the
 
 **LASSO (L1):** 
 $$R(\theta) = \Vert \theta \Vert_1 = \sum_{j=1}^d |\theta_j|$$
+
 **Дополнительные слагаемые в градиенте:**
 
 - Ridge: добавляется $\tau \cdot \theta_j$
