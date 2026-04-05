@@ -52,6 +52,18 @@ $$R(\\theta) = \\frac{1}{2} \\|\\theta\\|_2^2 = \\frac{1}{2} \\sum_{j=1}^d \\the
 $$R(\\theta) = \\|\\theta\\|_1 = \\sum_{j=1}^d |\\theta_j|$$
 
 **Дополнительные слагаемые в градиенте:**
+
+- Ridge: добавляется $\\tau \\cdot \\theta_j$
+- LASSO: добавляется $\\tau \\cdot \\text{sign}(\\theta_j)$
+### 1. Ridge (L2) и LASSO (L1)
+
+**Ridge (L2):** 
+$$R(\\theta) = \\frac{1}{2} \\|\\theta\\|_2^2 = \\frac{1}{2} \\sum_{j=1}^d \\theta_j^2$$
+
+**LASSO (L1):** 
+$$R(\\theta) = \\|\\theta\\|_1 = \\sum_{j=1}^d |\\theta_j|$$
+
+**Дополнительные слагаемые в градиенте:**
 - Ridge: добавляется $\\tau \\cdot \\theta_j$
 - LASSO: добавляется $\\tau \\cdot \\text{sign}(\\theta_j)$
 
@@ -62,8 +74,6 @@ $$R(\\theta) = \\|\\theta\\|_1 = \\sum_{j=1}^d |\\theta_j|$$
 ### 3. Предельные случаи
 
 | | τ → 0 | τ → +∞ |
-|---|-------|--------|
-| **Ridge** | θ → решение МНК | θ → 0 |
 | **LASSO** | θ → решение МНК | θ → 0 |
 
 ### 4. Проблема sign(0)
