@@ -45,12 +45,13 @@ SGD жертвует точностью градиента ради скорос
 
 ### 1. Ridge (L2) и LASSO (L1)
 
-**Ridge (L2):** $R(\\theta) = \\frac{1}{2} \\|\\theta\\|_2^2 = \\frac{1}{2} \\sum_{j=1}^d \\theta_j^2$
+**Ridge (L2):** 
+$$R(\\theta) = \\frac{1}{2} \\|\\theta\\|_2^2 = \\frac{1}{2} \\sum_{j=1}^d \\theta_j^2$$
 
-**LASSO (L1):** $R(\\theta) = \\|\\theta\\|_1 = \\sum_{j=1}^d |\\theta_j|$
+**LASSO (L1):** 
+$$R(\\theta) = \\|\\theta\\|_1 = \\sum_{j=1}^d |\\theta_j|$$
 
 **Дополнительные слагаемые в градиенте:**
-
 - Ridge: добавляется $\\tau \\cdot \\theta_j$
 - LASSO: добавляется $\\tau \\cdot \\text{sign}(\\theta_j)$
 
