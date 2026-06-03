@@ -74,7 +74,7 @@ $$Q(\boldsymbol{\theta}, X^\ell) = \frac{1}{\ell} \sum_{i=1}^{\ell} \mathscr{L}_
 
 $$\hat{y}_k = \frac{e^{z_k - m}}{\sum_j e^{z_j - m}}.$$
 
-Эквивалентность доказывается элементарно:
+Докажем эквивалентность:
 
 $$\frac{e^{z_k - m}}{\sum_j e^{z_j - m}} = \frac{e^{z_k} / e^{m}}{\sum_j (e^{z_j} / e^{m})} = \frac{e^{z_k}}{\sum_j e^{z_j}}.$$
 
