@@ -1,6 +1,6 @@
 # Теоретическая часть — ЛР 5
 
-**Студент:** [твоё имя]  
+**Студент:** [Ваше Имя]  
 **Student ID:** 22  
 **Вариант Q3:** 1 (Sigmoid + Tanh)  
 **Архитектура:** 784 → 256 → 128 → 10  
@@ -37,7 +37,7 @@ $$a^{(2)} = \sigma_2(z^{(2)})$$
 
 **Слой 3 (выходной):**
 $$z^{(3)} = a^{(2)} W^{(3)} + b^{(3)}$$
-$$\hat{y}_{ik} = \frac{\exp(z^{(3)}_{ik})}{\sum_{j=1}^{10} \exp(z^{(3)}_{ij})}$$
+$$\hat{y}_{i,k} = \frac{\exp(z_{i,k}^{(3)})}{\sum_{j=1}^{10} \exp(z_{i,j}^{(3)})}$$
 
 *Размерности:*
 - $W^{(3)} \in \mathbb{R}^{128 \times 10}$
@@ -48,7 +48,7 @@ $$\hat{y}_{ik} = \frac{\exp(z^{(3)}_{ik})}{\sum_{j=1}^{10} \exp(z^{(3)}_{ij})}$$
 ### 1.2 Функция потерь cross-entropy
 
 Функция потерь для одного примера:
-$$\mathscr{L}(\hat{y}_i, y_i) = -\sum_{k=1}^{K} y_{ik} \log \hat{y}_{ik}$$
+$$\mathscr{L}(\hat{y}_i, y_i) = -\sum_{k=1}^{K} y_{i,k} \log \hat{y}_{i,k}$$
 
 Функционал качества для всей выборки:
 $$Q(\boldsymbol{\theta}, X^\ell) = \frac{1}{\ell}\sum_{i=1}^{\ell} \mathscr{L}(\hat{y}_i, y_i)$$
@@ -56,10 +56,10 @@ $$Q(\boldsymbol{\theta}, X^\ell) = \frac{1}{\ell}\sum_{i=1}^{\ell} \mathscr{L}(\
 ### 1.3 Численная стабильность softmax
 
 Оригинальная формула softmax:
-$$\hat{y}_k = \frac{\exp(z^{(3)}_k)}{\sum_{j=1}^{K} \exp(z^{(3)}_j)}$$
+$$\hat{y}_k = \frac{\exp(z_k^{(3)})}{\sum_{j=1}^{K} \exp(z_j^{(3)})}$$
 
 Численно стабильная формула:
-$$\hat{y}_k = \frac{\exp(z^{(3)}_k - m)}{\sum_{j=1}^{K} \exp(z^{(3)}_j - m)}, \quad m = \max_j z^{(3)}_j$$
+$$\hat{y}_k = \frac{\exp(z_k^{(3)} - m)}{\sum_{j=1}^{K} \exp(z_j^{(3)} - m)}, \quad m = \max_j z_j^{(3)}$$
 
 Доказательство эквивалентности:
 $$\frac{\exp(z_k - m)}{\sum_j \exp(z_j - m)} = \frac{\exp(z_k) \cdot \exp(-m)}{\sum_j (\exp(z_j) \cdot \exp(-m))} = \frac{\exp(z_k)}{\sum_j \exp(z_j)}$$
@@ -71,7 +71,7 @@ $$\frac{\exp(z_k - m)}{\sum_j \exp(z_j - m)} = \frac{\exp(z_k) \cdot \exp(-m)}{\
 ### 2.1 Градиент по логитам выходного слоя
 
 Для одного примера:
-$$\frac{\partial \mathscr{L}}{\partial z^{(3)}_k} = \hat{y}_k - y_k$$
+$$\frac{\partial \mathscr{L}}{\partial z_k^{(3)}} = \hat{y}_k - y_k$$
 
 Для батча:
 $$\frac{\partial Q}{\partial Z^{(3)}} = \frac{1}{N}(\hat{Y} - Y)$$
@@ -80,7 +80,7 @@ $$\frac{\partial Q}{\partial Z^{(3)}} = \frac{1}{N}(\hat{Y} - Y)$$
 
 $$\frac{\partial Q}{\partial W^{(3)}} = (a^{(2)})^\top \cdot \frac{\partial Q}{\partial Z^{(3)}}$$
 
-$$\frac{\partial Q}{\partial b^{(3)}} = \sum_{i=1}^{N} \frac{\partial Q}{\partial Z^{(3)}_i}$$
+$$\frac{\partial Q}{\partial b^{(3)}} = \sum_{i=1}^{N} \frac{\partial Q}{\partial Z_i^{(3)}}$$
 
 ### 2.3 Общая формула обратного распространения
 
