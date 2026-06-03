@@ -1,6 +1,6 @@
 # Теоретическая часть — ЛР 5
 
-**Студент:** Чернов Дмитрий Андреевич  
+**Студент:** Чернов Дмитрий Андреевич 
 **Student ID:** 22  
 **Вариант Q3:** 1 (Sigmoid + Tanh)  
 **Архитектура:** 784 → 256 → 128 → 10  
@@ -18,58 +18,52 @@
 
 Вычисляем линейное преобразование:
 
-$$
-Z^{(1)} = A^{(0)} W^{(1)} + b^{(1)}.
-$$
+$$Z^{(1)} = A^{(0)} W^{(1)} + b^{(1)}.$$
+
+Размерности: $A^{(0)} \in \mathbb{R}^{N \times 784}$, $W^{(1)} \in \mathbb{R}^{784 \times 256}$, $b^{(1)} \in \mathbb{R}^{256}$ (broadcasting) ⇒ $Z^{(1)} \in \mathbb{R}^{N \times 256}$.
 
 Затем поэлементно применяем сигмоиду:
 
-$$
-A^{(1)} = \sigma_{\text{sigmoid}}(Z^{(1)}) = \frac{1}{1 + e^{-Z^{(1)}}}.
-$$
+$$A^{(1)} = \sigma_{\text{sigmoid}}(Z^{(1)}) = \frac{1}{1 + e^{-Z^{(1)}}}.$$
+
+Размерность $A^{(1)}$ совпадает с $Z^{(1)}$: $A^{(1)} \in \mathbb{R}^{N \times 256}$.
 
 **Второй уровень** ($n_2=128$, активация Tanh).  
 $W^{(2)} \in \mathbb{R}^{256 \times 128}$, $b^{(2)} \in \mathbb{R}^{128}$.
 
-$$
-Z^{(2)} = A^{(1)} W^{(2)} + b^{(2)}.
-$$
+$$Z^{(2)} = A^{(1)} W^{(2)} + b^{(2)}.$$
 
-$$
-A^{(2)} = \sigma_{\text{tanh}}(Z^{(2)}) = \frac{e^{Z^{(2)}} - e^{-Z^{(2)}}}{e^{Z^{(2)}} + e^{-Z^{(2)}}}.
-$$
+Размерности: $A^{(1)} \in \mathbb{R}^{N \times 256}$, $W^{(2)} \in \mathbb{R}^{256 \times 128}$, $b^{(2)} \in \mathbb{R}^{128}$ ⇒ $Z^{(2)} \in \mathbb{R}^{N \times 128}$.
+
+$$A^{(2)} = \sigma_{\text{tanh}}(Z^{(2)}) = \frac{e^{Z^{(2)}} - e^{-Z^{(2)}}}{e^{Z^{(2)}} + e^{-Z^{(2)}}}.$$
+
+Размерность $A^{(2)} \in \mathbb{R}^{N \times 128}$.
 
 **Третий уровень** (выходной, $K=10$ классов).  
 $W^{(3)} \in \mathbb{R}^{128 \times 10}$, $b^{(3)} \in \mathbb{R}^{10}$.
 
-$$
-Z^{(3)} = A^{(2)} W^{(3)} + b^{(3)}.
-$$
+$$Z^{(3)} = A^{(2)} W^{(3)} + b^{(3)}.$$
+
+Размерности: $A^{(2)} \in \mathbb{R}^{N \times 128}$, $W^{(3)} \in \mathbb{R}^{128 \times 10}$, $b^{(3)} \in \mathbb{R}^{10}$ ⇒ $Z^{(3)} \in \mathbb{R}^{N \times 10}$.
 
 **Преобразование softmax** для получения вероятностного распределения:
 
-$$
-\hat{y}_{ik} = \frac{\exp(z_{ik}^{(3)})}{\sum_{j=1}^{10} \exp(z_{ij}^{(3)})}.
-$$
+$$\hat{y}_{ik} = \frac{\exp(z_{ik}^{(3)})}{\sum_{j=1}^{10} \exp(z_{ij}^{(3)})}.$$
 
-Результат — матрица $\hat{Y} \in \mathbb{R}^{N \times 10}$, строки которой суммируются в единицу.
+Результат — матрица $\hat{Y} \in \mathbb{R}^{N \times 10}$.
 
 ### 1.2 Целевая функция и критерий качества
 
 Для одного обучающего примера с истинной меткой $c$ используется one-hot представление $y$: $y_c = 1$, остальные нули.  
 Кросс-энтропия:
 
-$$
-\mathscr{L} = -\sum_{k=1}^{10} y_k \log \hat{y}_k = -\log \hat{y}_c.
-$$
+$$\mathscr{L} = -\sum_{k=1}^{10} y_k \log \hat{y}_k = -\log \hat{y}_c.$$
 
 Если модель уверенно предсказывает верный класс ($\hat{y}_c \to 1$), значение $\mathscr{L}$ стремится к нулю. При $\hat{y}_c \to 0$ потери неограниченно растут.
 
 Критерий качества на всей выборке $X^\ell$ (объём $\ell$) — усреднение индивидуальных потерь:
 
-$$
-Q(\boldsymbol{\theta}, X^\ell) = \frac{1}{\ell} \sum_{i=1}^{\ell} \mathscr{L}_i,
-$$
+$$Q(\boldsymbol{\theta}, X^\ell) = \frac{1}{\ell} \sum_{i=1}^{\ell} \mathscr{L}_i,$$
 
 где $\boldsymbol{\theta}$ — совокупность всех обучаемых параметров сети.
 
@@ -78,15 +72,11 @@ $$
 Прямое вычисление $\hat{y}_k = \frac{e^{z_k}}{\sum_j e^{z_j}}$ опасно переполнением при больших $z_k$.  
 Стабилизированная версия: вычитаем максимум $m = \max_j z_j$:
 
-$$
-\hat{y}_k = \frac{e^{z_k - m}}{\sum_j e^{z_j - m}}.
-$$
+$$\hat{y}_k = \frac{e^{z_k - m}}{\sum_j e^{z_j - m}}.$$
 
 Эквивалентность доказывается элементарно:
 
-$$
-\frac{e^{z_k - m}}{\sum_j e^{z_j - m}} = \frac{e^{z_k} / e^{m}}{\sum_j (e^{z_j} / e^{m})} = \frac{e^{z_k}}{\sum_j e^{z_j}}.
-$$
+$$\frac{e^{z_k - m}}{\sum_j e^{z_j - m}} = \frac{e^{z_k} / e^{m}}{\sum_j (e^{z_j} / e^{m})} = \frac{e^{z_k}}{\sum_j e^{z_j}}.$$
 
 После вычитания максимума наибольший показатель экспоненты равен $0$, остальные — неположительны, поэтому экспоненты лежат в диапазоне $(0,1]$, что исключает переполнение.
 
@@ -99,87 +89,84 @@ $$
 **Для одного примера.** Пусть $z = (z_1,\dots,z_K)$, $p = \text{softmax}(z)$, $y$ — one-hot с единицей на позиции $c$.  
 Потери $\mathscr{L} = -\log p_c$. Перепишем:
 
-$$
-\mathscr{L} = -\log\left(\frac{e^{z_c}}{S}\right) = -z_c + \log S,\quad S = \sum_{j=1}^K e^{z_j}.
-$$
+$$\mathscr{L} = -\log\left(\frac{e^{z_c}}{S}\right) = -z_c + \log S,\quad S = \sum_{j=1}^K e^{z_j}.$$
 
-Дифференцируем:
+Дифференцируем по $z_k$:
+- Производная первого слагаемого $-z_c$ даёт $-1$ при $k=c$ и $0$ иначе.
+- Для второго слагаемого $\log S$ применяем цепное правило: $\frac{\partial}{\partial z_k} \log S = \frac{1}{S} \cdot \frac{\partial S}{\partial z_k}$. Поскольку $S = \sum_j e^{z_j}$, имеем $\frac{\partial S}{\partial z_k} = e^{z_k}$. Тогда $\frac{\partial}{\partial z_k} \log S = \frac{e^{z_k}}{S} = p_k$.
 
-$$
-\frac{\partial \mathscr{L}}{\partial z_k} = 
+Собираем:
+
+$$\frac{\partial \mathscr{L}}{\partial z_k} = 
 \begin{cases}
 -1 + p_k, & k = c, \\
 p_k, & k \ne c.
-\end{cases}
-$$
+\end{cases}$$
 
 Учитывая $y_c = 1$, $y_k = 0$ для $k \ne c$, получаем единую формулу:
 
-$$
-\frac{\partial \mathscr{L}}{\partial z_k} = p_k - y_k.
-$$
+$$\frac{\partial \mathscr{L}}{\partial z_k} = p_k - y_k.$$
 
 **Для батча** из $N$ примеров: $Q = \frac{1}{N}\sum_i \mathscr{L}_i$. Производная усредняется:
 
-$$
-\frac{\partial Q}{\partial Z} = \frac{1}{N}(P - Y).
-$$
+$$\frac{\partial Q}{\partial Z} = \frac{1}{N}(P - Y).$$
 
 ### 2.2 Градиенты параметров выходного слоя
 
 Имеем $Z^{(3)} = A^{(2)} W^{(3)} + b^{(3)}$ и $\frac{\partial Q}{\partial Z^{(3)}} = \frac{1}{N}(\hat{Y} - Y)$.
 
+Размерности: $A^{(2)} \in \mathbb{R}^{N \times 128}$, $W^{(3)} \in \mathbb{R}^{128 \times 10}$, $\frac{\partial Q}{\partial Z^{(3)}} \in \mathbb{R}^{N \times 10}$.
+
 Вывод для весов:
 
-$$
-\frac{\partial Q}{\partial W^{(3)}_{pq}} = \sum_{i=1}^N \frac{\partial Q}{\partial Z^{(3)}_{iq}} A^{(2)}_{ip}.
-$$
+$$\frac{\partial Q}{\partial W^{(3)}_{pq}} = \sum_{i=1}^N \frac{\partial Q}{\partial Z^{(3)}_{iq}} A^{(2)}_{ip}.$$
 
 В матричном виде:
 
-$$
-\frac{\partial Q}{\partial W^{(3)}} = (A^{(2)})^\top \cdot \frac{\partial Q}{\partial Z^{(3)}} = \frac{1}{N} (A^{(2)})^\top (\hat{Y} - Y).
-$$
+$$\frac{\partial Q}{\partial W^{(3)}} = (A^{(2)})^\top \cdot \frac{\partial Q}{\partial Z^{(3)}} = \frac{1}{N} (A^{(2)})^\top (\hat{Y} - Y).$$
+
+Размерность результата: $(A^{(2)})^\top \in \mathbb{R}^{128 \times N}$, $\frac{\partial Q}{\partial Z^{(3)}} \in \mathbb{R}^{N \times 10}$ ⇒ $\frac{\partial Q}{\partial W^{(3)}} \in \mathbb{R}^{128 \times 10}$, что совпадает с размерностью $W^{(3)}$.
 
 Для смещений:
 
-$$
-\frac{\partial Q}{\partial b^{(3)}_q} = \sum_{i=1}^N \frac{\partial Q}{\partial Z^{(3)}_{iq}}.
-$$
+$$\frac{\partial Q}{\partial b^{(3)}_q} = \sum_{i=1}^N \frac{\partial Q}{\partial Z^{(3)}_{iq}}.$$
+
+В векторной форме: $\frac{\partial Q}{\partial b^{(3)}} \in \mathbb{R}^{10}$.
 
 ### 2.3 Рекуррентная формула обратного распространения
 
 Введём $\delta^{(l)} = \frac{\partial Q}{\partial Z^{(l)}}$.  
-Учитывая $Z^{(l+1)} = A^{(l)} W^{(l+1)} + b^{(l+1)}$ и $A^{(l)} = \sigma_l(Z^{(l)})$, получаем:
+Учитывая $Z^{(l+1)} = A^{(l)} W^{(l+1)} + b^{(l+1)}$ и $A^{(l)} = \sigma_l(Z^{(l)})$, получаем по цепному правилу:
 
-$$
-\delta^{(l)} = \left( \delta^{(l+1)} \cdot (W^{(l+1)})^\top \right) \odot \sigma'_l(Z^{(l)}).
-$$
+$$\delta^{(l)} = \frac{\partial Q}{\partial Z^{(l)}} = \frac{\partial Q}{\partial Z^{(l+1)}} \cdot \frac{\partial Z^{(l+1)}}{\partial A^{(l)}} \odot \frac{\partial A^{(l)}}{\partial Z^{(l)}}.$$
 
-Смысл множителей:
-- $(W^{(l+1)})^\top$ транслирует ошибку с $(l+1)$-го слоя на выходы $l$-го,
-- $\sigma'_l(Z^{(l)})$ применяет цепное правило для функции активации текущего слоя.
+Компоненты:
+- $\frac{\partial Q}{\partial Z^{(l+1)}} = \delta^{(l+1)}$ — градиент на следующем слое.
+- $\frac{\partial Z^{(l+1)}}{\partial A^{(l)}} = W^{(l+1)}$ (линейная зависимость). При обратном распространении это даёт транспонирование: $\delta^{(l+1)} \cdot (W^{(l+1)})^\top$.
+- $\frac{\partial A^{(l)}}{\partial Z^{(l)}} = \sigma'_l(Z^{(l)})$ — производная функции активации. Она показывает, насколько сильно изменение преактивации влияет на пост-активацию. Если $\sigma'(z) \approx 0$ (зона насыщения), градиент затухает.
+
+Итоговая формула:
+
+$$\boxed{\delta^{(l)} = \bigl( \delta^{(l+1)} \cdot (W^{(l+1)})^\top \bigr) \odot \sigma'_l(Z^{(l)})}.$$
 
 ### 2.4 Конкретизация для нашей архитектуры
 
 **Слой 2** ($l=2$, Tanh):
 
-$$
-\delta^{(2)} = \bigl( \delta^{(3)} (W^{(3)})^\top \bigr) \odot (1 - (A^{(2)})^2).
-$$
+$$\delta^{(2)} = \bigl( \delta^{(3)} (W^{(3)})^\top \bigr) \odot (1 - (A^{(2)})^2).$$
+
+Размерности: $\delta^{(3)} \in \mathbb{R}^{N \times 10}$, $(W^{(3)})^\top \in \mathbb{R}^{10 \times 128}$ ⇒ произведение $\in \mathbb{R}^{N \times 128}$.
 
 **Слой 1** ($l=1$, Sigmoid):
 
-$$
-\delta^{(1)} = \bigl( \delta^{(2)} (W^{(2)})^\top \bigr) \odot \bigl( A^{(1)} \odot (1 - A^{(1)}) \bigr).
-$$
+$$\delta^{(1)} = \bigl( \delta^{(2)} (W^{(2)})^\top \bigr) \odot \bigl( A^{(1)} \odot (1 - A^{(1)}) \bigr).$$
+
+Размерности: $\delta^{(2)} \in \mathbb{R}^{N \times 128}$, $(W^{(2)})^\top \in \mathbb{R}^{128 \times 256}$ ⇒ произведение $\in \mathbb{R}^{N \times 256}$.
 
 Градиенты параметров скрытых слоёв:
 
-$$
-\frac{\partial Q}{\partial W^{(l)}} = (A^{(l-1)})^\top \delta^{(l)}, \qquad
-\frac{\partial Q}{\partial b^{(l)}} = \sum_{i=1}^N \delta^{(l)}_{i\cdot}.
-$$
+$$\frac{\partial Q}{\partial W^{(l)}} = (A^{(l-1)})^\top \delta^{(l)}, \qquad
+\frac{\partial Q}{\partial b^{(l)}} = \sum_{i=1}^N \delta^{(l)}_{i\cdot}.$$
 
 ---
 
@@ -189,34 +176,38 @@ $$
 
 **Сигмоида:**
 
-$$
-\sigma_{\text{sigm}}(z) = \frac{1}{1 + e^{-z}}.
-$$
+$$\sigma_{\text{sigm}}(z) = \frac{1}{1 + e^{-z}}.$$
 
-Дифференцирование:
+Дифференцирование через правило сложной функции:
 
-$$
-\sigma'_{\text{sigm}}(z) = \frac{e^{-z}}{(1+e^{-z})^2} = \sigma_{\text{sigm}}(z)\bigl(1 - \sigma_{\text{sigm}}(z)\bigr).
-$$
+$$\sigma'_{\text{sigm}}(z) = \frac{e^{-z}}{(1+e^{-z})^2} = \sigma_{\text{sigm}}(z)\bigl(1 - \sigma_{\text{sigm}}(z)\bigr).$$
 
 **Гиперболический тангенс:**
 
-$$
-\sigma_{\text{tanh}}(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}.
-$$
+$$\sigma_{\text{tanh}}(z) = \frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}.$$
 
 Вычисляем производную:
 
-$$
-\sigma'_{\text{tanh}}(z) = \frac{4}{(e^{z} + e^{-z})^2} = 1 - \tanh^2(z).
-$$
+$$\sigma'_{\text{tanh}}(z) = \frac{(e^{z} + e^{-z})(e^{z} + e^{-z}) - (e^{z} - e^{-z})(e^{z} - e^{-z})}{(e^{z} + e^{-z})^2}.$$
+
+Раскрываем: числитель = $(e^{2z} + 2 + e^{-2z}) - (e^{2z} - 2 + e^{-2z}) = 4$.
+
+Таким образом:
+
+$$\sigma'_{\text{tanh}}(z) = \frac{4}{(e^{z} + e^{-z})^2}.$$
+
+Теперь выражаем через $\sigma_{\text{tanh}}(z)$:
+
+$$1 - \sigma_{\text{tanh}}^2(z) = 1 - \left(\frac{e^{z} - e^{-z}}{e^{z} + e^{-z}}\right)^2 = \frac{(e^{z} + e^{-z})^2 - (e^{z} - e^{-z})^2}{(e^{z} + e^{-z})^2} = \frac{4}{(e^{z} + e^{-z})^2}.$$
+
+Следовательно, $\sigma'_{\text{tanh}}(z) = 1 - \tanh^2(z)$.
 
 ### 3.2 Характеристики функций
 
 | Функция | Область значений | $\max|\sigma'(z)|$ | Зоны, где $\sigma'(z) \approx 0$ |
 |:---|:---:|:---:|:---|
-| Sigmoid | $(0, 1)$ | $0.25$ | $z \to +\infty$, $z \to -\infty$ |
-| Tanh | $(-1, 1)$ | $1$ | $z \to +\infty$, $z \to -\infty$ |
+| Sigmoid | $(0, 1)$ | $0.25$ при $z=0$ | $z \to +\infty$, $z \to -\infty$ |
+| Tanh | $(-1, 1)$ | $1$ при $z=0$ | $z \to +\infty$, $z \to -\infty$ |
 
 **Почему Tanh предпочтительнее Sigmoid:**
 - Выход Tanh центрирован около нуля, что ускоряет сходимость градиентного спуска.
@@ -226,20 +217,18 @@ $$
 
 Цепочка распространения $\delta^{(1)}$ через скрытые слои:
 
-$$
-\delta^{(1)} = \Bigl( \bigl( \delta^{(3)} (W^{(3)})^\top \bigr) \odot \sigma'_{\text{tanh}}(Z^{(2)}) \Bigr) (W^{(2)})^\top \odot \sigma'_{\text{sigmoid}}(Z^{(1)}).
-$$
+$$\delta^{(1)} = \Bigl( \bigl( \delta^{(3)} (W^{(3)})^\top \bigr) \odot \sigma'_{\text{tanh}}(Z^{(2)}) \Bigr) (W^{(2)})^\top \odot \sigma'_{\text{sigmoid}}(Z^{(1)}).$$
 
 Оценим норму:
 
-$$
-\|\delta^{(1)}\| \le \|\delta^{(3)}\| \cdot \|W^{(3)}\| \cdot \|W^{(2)}\| \cdot \max|\sigma'_{\text{tanh}}| \cdot \max|\sigma'_{\text{sigmoid}}|.
-$$
+$$\|\delta^{(1)}\| \le \|\delta^{(3)}\| \cdot \|W^{(3)}\| \cdot \|W^{(2)}\| \cdot \max|\sigma'_{\text{tanh}}| \cdot \max|\sigma'_{\text{sigmoid}}|.$$
 
 Подставляя $\max|\sigma'_{\text{tanh}}| = 1$, $\max|\sigma'_{\text{sigmoid}}| = 0.25$, имеем:
 
-$$
-\|\delta^{(1)}\| \le 0.25 \cdot \|W^{(3)}\| \cdot \|W^{(2)}\| \cdot \|\delta^{(3)}\|.
-$$
+$$\|\delta^{(1)}\| \le 0.25 \cdot \|W^{(3)}\| \cdot \|W^{(2)}\| \cdot \|\delta^{(3)}\|.$$
 
-Множитель $0.25$ существенно подавляет градиент. В сети с большим количеством сигмоидных слоёв затухание становится экспоненциальным. Поэтому Sigmoid не рекомендуется для глубоких архитектур. Tanh работает лучше, но при значительной глубине также может демонстрировать проблемы насыщения.
+Если бы в сети было $L$ слоёв с Sigmoid, на каждом слое градиент умножался бы не более чем на $0.25 \cdot \|W\|$. При корректной инициализации $\|W\| \approx 1$, поэтому:
+
+$$\|\delta^{(1)}\| \le (0.25)^{L-1} \cdot \|\delta^{(L)}\| \cdot \prod_{l=2}^{L} \|W^{(l)}\|.$$
+
+Множитель $(0.25)^{L-1}$ убывает **экспоненциально** с ростом глубины сети. Для $L=5$ это $\approx 0.004$, для $L=10$ — $\approx 2.5 \cdot 10^{-6}$. Именно поэтому Sigmoid непригодна для глубоких сетей. Tanh даёт множитель $1^{L-1}=1$, но тоже страдает от насыщения при больших $|z|$.
